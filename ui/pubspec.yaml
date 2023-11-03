@@ -1,0 +1,28 @@
+name: HapticAlarm
+description: This is a project
+version: 0.1.2
+
+publish_to: 'none'
+
+environment:
+  sdk: '>=3.0.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  alarm: ^2.1.0
+
+  cupertino_icons: ^1.0.2
+  http: ^1.1.0
+  omni_datetime_picker: ^1.0.9
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+  flutter_lints: ^2.0.0
+
+flutter:
+
+  uses-material-design: true
