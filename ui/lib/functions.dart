@@ -1,30 +1,26 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 
-import 'package:HapticAlarm/HapticAlarm.dart';
-import 'package:HapticAlarm/main.dart';
+import 'package:haptic_alarm/haptic_alarm.dart';
+import 'package:haptic_alarm/main.dart';
 import 'package:flutter/material.dart';
 
 void restartApp() {
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
 Future<void> httpDeleteData(HapticAlarm alarm) async {
   final String url =
-      'https://users.it.teithe.gr/~it185369/Haptics/api/v1/ui/deleteAlarm.php?id=' +
-          alarm.uid.toString();
+      'https://users.it.teithe.gr/~it185369/Haptics/api/v1/ui/deleteAlarm.php?id=${alarm.uid}';
 
   final response = await http.delete(
     Uri.parse(url),
   );
-  print(response);
   if (response.statusCode == 200) {
     // Request was successful, handle the response here
-    print('successfuldELETED:');
     restartApp();
   } else {
     // Request failed, handle the error here
-    print('Request failed with status code: ${response.statusCode}');
   }
 }
 
@@ -44,17 +40,15 @@ Future<List<HapticAlarm>> fetchAlarms() async {
 }
 
 Future<void> httpUpdateData(HapticAlarm alarm) async {
-  final String url =
+  const String url =
       'https://users.it.teithe.gr/~it185369/Haptics/api/v1/ui/updateAlarm.php'; // Replace with your PHP script's URL
 
   // Define the JSON data to send in the request
   Map<String, dynamic> jsonData = {
     "id": alarm.uid.toString()..padLeft(5, '0'),
     'Status': (alarm.Status == true) ? 1 : 0,
-    "Time": alarm.Time.hour.toString().padLeft(2, '0') +
-        ":" +
-        alarm.Time.minute.toString().padLeft(2, '0') +
-        ":00",
+    "Time":
+        "${alarm.Time.hour.toString().padLeft(2, '0')}:${alarm.Time.minute.toString().padLeft(2, '0')}:00",
     'Frequency': alarm.Frequency.map((day) => day.index + 1)
         .toList()
         .toString()
@@ -69,7 +63,6 @@ Future<void> httpUpdateData(HapticAlarm alarm) async {
   print(response);
   if (response.statusCode == 200) {
     // Request was successful, handle the response here
-    print('Edit successful: ${response.body}');
     restartApp();
   } else {
     // Request failed, handle the error here
@@ -78,15 +71,13 @@ Future<void> httpUpdateData(HapticAlarm alarm) async {
 }
 
 Future<void> postData(HapticAlarm alarm) async {
-  final String url =
+  const String url =
       'https://users.it.teithe.gr/~it185369/Haptics/api/v1/ui/PostAlarm.php'; // Replace with your PHP script's URL
 
   // Define the JSON data to send in the request
   Map<String, dynamic> jsonData = {
-    "Time": alarm.Time.hour.toString().padLeft(2, '0') +
-        ":" +
-        alarm.Time.minute.toString().padLeft(2, '0') +
-        ":00",
+    "Time":
+        "${alarm.Time.hour.toString().padLeft(2, '0')}:${alarm.Time.minute.toString().padLeft(2, '0')}:00",
     'Status': (alarm.Status == true) ? 1 : 0,
     'Frequency': alarm.Frequency.map((day) => day.index + 1)
         .toList()
@@ -94,20 +85,11 @@ Future<void> postData(HapticAlarm alarm) async {
         .replaceAll(" ", ""),
     'Type': alarm.Type.toString()
   };
-  print(alarm.Frequency.map((day) => day.index + 1).toList().toString());
-  // Encode the JSON data as a string
   String jsonBody = json.encode(jsonData);
-
   final response = await http.post(Uri.parse(url), body: jsonBody);
-  print(response);
   if (response.statusCode == 200) {
-    // Request was successful, handle the response here
-    print('Request successful: ${response.body}');
     restartApp();
-  } else {
-    // Request failed, handle the error here
-    print('Request failed with status code: ${response.statusCode}');
-  }
+  } else {}
 }
 
 bool isEveryday(List<Day> days) {

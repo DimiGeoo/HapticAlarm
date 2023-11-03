@@ -1,22 +1,24 @@
-import 'package:HapticAlarm/BottomSheets/SelectFrequency.dart';
-import 'package:HapticAlarm/BottomSheets/SelectType.dart';
-import 'package:HapticAlarm/HapticAlarm.dart';
-import 'package:HapticAlarm/functions.dart';
+import 'package:haptic_alarm/BottomSheets/select_frequency.dart';
+import 'package:haptic_alarm/BottomSheets/select_type.dart';
+import 'package:haptic_alarm/haptic_alarm.dart';
+import 'package:haptic_alarm/functions.dart';
 import 'package:flutter/material.dart';
 import 'package:omni_datetime_picker/src/components/time_picker_spinner.dart';
 
-class CreateAlarmSheet extends StatefulWidget {
+class UpdateAlarm extends StatefulWidget {
   final HapticAlarm alarm;
-  const CreateAlarmSheet({super.key, required this.alarm});
+  const UpdateAlarm({super.key, required this.alarm});
 
   @override
-  _CreateAlarmSheetState createState() => _CreateAlarmSheetState(alarm);
+  _UpdateAlarmState createState() => _UpdateAlarmState(
+        alarm,
+      );
 }
 
-class _CreateAlarmSheetState extends State<CreateAlarmSheet> {
+class _UpdateAlarmState extends State<UpdateAlarm> {
   final HapticAlarm alarm;
 
-  _CreateAlarmSheetState(this.alarm);
+  _UpdateAlarmState(this.alarm);
 
   @override
   Widget build(BuildContext context) {
@@ -27,7 +29,7 @@ class _CreateAlarmSheetState extends State<CreateAlarmSheet> {
         mainAxisSize: MainAxisSize.min,
         children: [
           const Text(
-            "Set Alarm",
+            "Update Alarm",
             style: TextStyle(
               fontSize: 20,
               fontWeight: FontWeight.bold,
@@ -40,9 +42,9 @@ class _CreateAlarmSheetState extends State<CreateAlarmSheet> {
                   context: context,
                   builder: (BuildContext context) {
                     return AlertDialog(
-                      contentPadding:
-                          EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-                      title: Text("Select The time"),
+                      contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 10, vertical: 10),
+                      title: const Text("Select The time"),
                       content: TimePickerSpinner(
                         isForce2Digits: true,
                         itemHeight: 75, // Adjust the height as needed
@@ -60,43 +62,58 @@ class _CreateAlarmSheetState extends State<CreateAlarmSheet> {
                   });
             },
             child: ListTile(
-              title: Text("Time"),
+              title: const Text("Time"),
               trailing: Text(
-                style: TextStyle(fontSize: 30),
-                alarm.Time.hour.toString().padLeft(2, '0') +
-                    " : " +
-                    alarm.Time.minute.toString().padLeft(2, '0'),
+                style: const TextStyle(fontSize: 30),
+                "${alarm.Time.hour.toString().padLeft(2, '0')} : ${alarm.Time.minute.toString().padLeft(2, '0')}",
               ),
             ),
           ),
           GestureDetector(
             onTap: () {
               Navigator.pop(context);
-              showFrequencyBottomSheet(
-                  context, alarm, false); //no edit that means create
+              showFrequencyBottomSheet(context, alarm, true); //true is for edit
             },
             child: ListTile(
-              title: Text("Frequency"),
+              title: const Text("Frequency"),
               trailing: Text(determineDayType(alarm.Frequency)),
             ),
           ),
           GestureDetector(
             onTap: () {
               Navigator.pop(context);
-              showTypeBottomSheet(context, alarm, false);
+              showTypeBottomSheet(context, alarm, true);
             },
             child: ListTile(
-              title: Text("Type"),
+              title: const Text("Type"),
               trailing: Text((alarm.Type)),
             ),
           ),
-          ElevatedButton(
-            onPressed: () {
-              Navigator.pop(context);
-              postData(alarm);
-              // Navigator.pop(context);
-            },
-            child: Text("Set Alarm"),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 50),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                ElevatedButton(
+                  onPressed: () {
+                    setState(() {
+                      Navigator.pop(context);
+
+                      httpDeleteData(alarm);
+                    });
+                  },
+                  child: Icon(
+                      color: Colors.red.shade800, Icons.delete_forever_sharp),
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                    httpUpdateData(alarm);
+                  },
+                  child: const Text("Update Alarm"),
+                ),
+              ],
+            ),
           ),
         ],
       ),
