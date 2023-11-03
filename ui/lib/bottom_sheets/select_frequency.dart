@@ -1,9 +1,11 @@
-import 'package:haptic_alarm/BottomSheets/create_alarm.dart';
-import 'package:haptic_alarm/BottomSheets/edit_alarm.dart';
-import 'package:haptic_alarm/haptic_alarm.dart';
+import 'package:HapticAlarm/bottom_sheets/create_alarm.dart';
+import 'package:HapticAlarm/bottom_sheets/edit_alarm.dart';
+import 'package:HapticAlarm/bottom_sheets/select_days.dart';
+import 'package:HapticAlarm/haptic_alarm.dart';
 import 'package:flutter/material.dart';
 
-void showTypeBottomSheet(BuildContext context, HapticAlarm alarm, bool edit) {
+void showFrequencyBottomSheet(
+    BuildContext context, HapticAlarm alarm, bool edit) {
   showModalBottomSheet(
     context: context,
     builder: (BuildContext context) {
@@ -11,9 +13,18 @@ void showTypeBottomSheet(BuildContext context, HapticAlarm alarm, bool edit) {
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
           ListTile(
-            title: const Text("Standar"),
+            title: const Text("EveryDay"),
             onTap: () {
-              alarm.Type = "Standar";
+              alarm.Frequency = [];
+              alarm.Frequency = [
+                Day.Monday,
+                Day.Tuesday,
+                Day.Thursday,
+                Day.Wednesday,
+                Day.Friday,
+                Day.Saturday,
+                Day.Sunday,
+              ];
               Navigator.pop(context);
               showModalBottomSheet(
                 context: context,
@@ -35,26 +46,19 @@ void showTypeBottomSheet(BuildContext context, HapticAlarm alarm, bool edit) {
           ),
           ListTile(
             onTap: () {
-              alarm.Type = "Emergency";
               Navigator.pop(context);
+
               showModalBottomSheet(
                 context: context,
                 builder: (BuildContext context) {
-                  if (edit) {
-                    //We edit
-                    return UpdateAlarm(
-                      alarm: alarm,
-                    );
-                  } else {
-                    //We create
-                    return CreateAlarmSheet(
-                      alarm: alarm,
-                    );
-                  }
+                  return PickDaysSheet(
+                    edit: edit,
+                    alarm: alarm,
+                  );
                 },
               );
             },
-            title: const Text("Emergency"),
+            title: const Text("Custom"),
           ),
         ],
       );

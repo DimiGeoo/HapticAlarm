@@ -1,32 +1,27 @@
-import 'package:haptic_alarm/BottomSheets/create_alarm.dart';
-import 'package:haptic_alarm/BottomSheets/edit_alarm.dart';
-import 'package:haptic_alarm/haptic_alarm.dart';
-import 'package:haptic_alarm/functions.dart';
+import 'package:HapticAlarm/bottom_sheets/create_alarm.dart';
+import 'package:HapticAlarm/bottom_sheets/edit_alarm.dart';
+import 'package:HapticAlarm/haptic_alarm.dart';
+import 'package:HapticAlarm/functions.dart';
 import 'package:flutter/material.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        textTheme: const TextTheme(bodyLarge: TextStyle(fontSize: 15)),
+        textTheme: TextTheme(bodyLarge: TextStyle(fontSize: 15)),
         useMaterial3: true,
       ),
-      home: const JsonDataList(),
+      home: JsonDataList(),
     );
   }
 }
 
 class JsonDataList extends StatefulWidget {
-  const JsonDataList({super.key});
-
   @override
   _JsonDataListState createState() => _JsonDataListState();
 }
@@ -37,9 +32,10 @@ class _JsonDataListState extends State<JsonDataList> {
 
   @override
   Widget build(BuildContext context) {
+    ;
     return Scaffold(
       floatingActionButton: FloatingActionButton(
-        child: const Icon(Icons.add_alarm),
+        child: Icon(Icons.add_alarm),
         onPressed: () {
           var alarm = HapticAlarm(
               true, "Standar", DateTime.now(), [Day.Monday, Day.Saturday]);
@@ -53,13 +49,16 @@ class _JsonDataListState extends State<JsonDataList> {
         },
       ),
       appBar: AppBar(
-        title: const Text('My Haptic Alarm'),
+        centerTitle: true,
+        foregroundColor: Colors.black,
+        elevation: 10,
+        title: Text('My Haptic Alarm'),
       ),
       body: FutureBuilder<List<HapticAlarm>>(
         future: fetchAlarms(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(
+            return Center(
                 child:
                     CircularProgressIndicator()); // Display a loading indicator
           } else if (snapshot.hasError) {
@@ -74,7 +73,7 @@ class _JsonDataListState extends State<JsonDataList> {
                     ListTile(
                       dense: true,
                       autofocus: true,
-                      contentPadding: const EdgeInsets.all(16),
+                      contentPadding: EdgeInsets.all(16),
                       onTap: () {
                         var alarm = hapticAlarms[index];
 
@@ -86,7 +85,7 @@ class _JsonDataListState extends State<JsonDataList> {
                         );
                       },
                       title: Text(
-                          style: const TextStyle(
+                          style: TextStyle(
                               fontSize: 30,
                               color: Colors.black,
                               fontWeight: FontWeight.bold),
@@ -110,7 +109,7 @@ class _JsonDataListState extends State<JsonDataList> {
                         },
                       ),
                     ),
-                    const Divider()
+                    Divider()
                   ],
                 );
               },

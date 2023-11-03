@@ -1,12 +1,12 @@
-import 'package:haptic_alarm/BottomSheets/create_alarm.dart';
-import 'package:haptic_alarm/BottomSheets/edit_alarm.dart';
-import 'package:haptic_alarm/haptic_alarm.dart';
+import 'package:HapticAlarm/bottom_sheets/create_alarm.dart';
+import 'package:HapticAlarm/bottom_sheets/edit_alarm.dart';
+import 'package:HapticAlarm/haptic_alarm.dart';
 import 'package:flutter/material.dart';
 
 class PickDaysSheet extends StatefulWidget {
   final HapticAlarm alarm;
   final bool edit;
-  const PickDaysSheet({super.key, required this.alarm, required this.edit});
+  PickDaysSheet({required this.alarm, required this.edit});
 
   @override
   _PickDaysSheetState createState() => _PickDaysSheetState(alarm, edit);
@@ -48,7 +48,7 @@ class _PickDaysSheetState extends State<PickDaysSheet> {
                     },
                   );
                 },
-                child: const Text('Save'),
+                child: Text('Save'),
               ),
               ElevatedButton(
                 onPressed: () {
@@ -71,7 +71,7 @@ class _PickDaysSheetState extends State<PickDaysSheet> {
                     },
                   );
                 },
-                child: const Text('Cancel'),
+                child: Text('Cancel'),
               ),
             ],
           ),
