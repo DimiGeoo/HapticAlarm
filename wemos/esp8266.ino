@@ -2,8 +2,8 @@
 #include <ESP8266HTTPClient.h>
 
 unsigned long vibrationStartTime = 0;
-const char* ssid = "**";
-const char* pass = "**";
+const char* ssid = "HUAWEI-HOME";
+const char* pass = "2310616137";
 const String api_alarms = "https://users.it.teithe.gr/~it185369/Haptics/api/v1/microcontroller/micro.php";
 unsigned long vibrationDuration = 30000;  // 30 seconds
 const int ledPin = D2;
@@ -17,6 +17,7 @@ unsigned long Wifi_Check_Millis = millis();  // Record the start time
 void setup() {
   Serial.begin(115200);
   pinMode(ledPin, OUTPUT);
+  pinMode(ledPin, LOW);
 
   // Wifi_Connection
   Serial.println("Connecting to Wi-Fi...");
@@ -26,11 +27,12 @@ void setup() {
     if (millis() - Wifi_Check_Millis > 10000) {//If not connected in 10 seconds Go to deep  sleep
       Serial.println("\n Failed to connect to Wi-Fi within 10 seconds. Going for deep sleep.");
       ESP.deepSleep(check_every * 1000000);
-      break;  // Exit the while loop
+    }else{
+      delay(250);
+      Serial.print(".");
+      
     }
     
-    delay(250);
-    Serial.print(".");
   }
   Serial.println("\nConnected to Wi-Fi!");
 
@@ -74,7 +76,7 @@ void setup() {
                 delay(200);  // Vibration OFF duration
             }
       }
-        digitalWrite(ledPin, LOW);  // Turn off the LED
+      digitalWrite(ledPin, LOW);  // Turn off the LED
 
       http.end();
       Serial.println("DeepSleep for 1 second and check again");
