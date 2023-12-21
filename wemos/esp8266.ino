@@ -2,13 +2,13 @@
 #include <ESP8266HTTPClient.h>
 
 unsigned long vibrationStartTime = 0;
-const char* ssid = "HUAWEI-HOME";
-const char* pass = "2310616137";
+const char* ssid = "Dimitris";
+const char* pass = "Dimitris";
 const String api_alarms = "https://users.it.teithe.gr/~it185369/Haptics/api/v1/microcontroller/micro.php";
 unsigned long vibrationDuration = 30000;  // 30 seconds
-const int ledPin = D2;
-const int check_every = 30 * 60;  // 30 minutes
-// Assuming the LED is connected to GPIO pin D2
+const int vibration_pin = D2;
+const int check_every = 30 * 60;  // 30 minutes Stored in Seconds
+
 String extractTimeDiff(String jsonResponse);
 float find_sec(String timeString);
 String get_AlarmType(String jsonResponse);
@@ -16,33 +16,36 @@ unsigned long Wifi_Check_Millis = millis();  // Record the start time
 
 void setup() {
   Serial.begin(115200);
-  pinMode(ledPin, OUTPUT);
-  pinMode(ledPin, LOW);
+  pinMode(vibration_pin, OUTPUT);
 
   // Wifi_Connection
   Serial.println("Connecting to Wi-Fi...");
   WiFi.begin(ssid, pass);
   WiFi.setHostname("MY_ESP");
   while (WiFi.status() != WL_CONNECTED) {
-    if (millis() - Wifi_Check_Millis > 10000) {//If not connected in 10 seconds Go to deep  sleep
+    //Trying to Connect  for 10 Seconds
+    if (millis() - Wifi_Check_Millis > 10000) {
       Serial.println("\n Failed to connect to Wi-Fi within 10 seconds. Going for deep sleep.");
       ESP.deepSleep(check_every * 1000000);
-    }else{
+    } else {
       delay(250);
       Serial.print(".");
-      
+      Wifi_Check_Millis = millis();  
     }
-    
   }
   Serial.println("\nConnected to Wi-Fi!");
 
-  digitalWrite(ledPin, LOW);
+  digitalWrite(vibration_pin, LOW);
+
+
+// Prepare the Get Request
   HTTPClient http;
   WiFiClientSecure wifiClientSecure;
   wifiClientSecure.setInsecure();
   http.begin(wifiClientSecure, api_alarms);
   int status_code = http.GET();
 
+  
   if (status_code == 200) {
     String response = http.getString();
     String time_diff = extractTimeDiff(response);
@@ -56,34 +59,32 @@ void setup() {
 
     } else if (second < 10) {
       vibrationStartTime = millis();  // Record the start time of the vibration
-      digitalWrite(ledPin, HIGH);
+      digitalWrite(vibration_pin, HIGH);
       while (millis() - vibrationStartTime < vibrationDuration) {
-        String alarmType = get_AlarmType(response);  // Get the alarm type once
+        String alarmType = get_AlarmType(response); 
         if (alarmType.equals("Emergency")) {
                 Serial.println("Emergency");
-                digitalWrite(ledPin, HIGH);
-                delay(1000);  // Vibration ON duration
-                digitalWrite(ledPin, LOW);
-                delay(200);  // Vibration OFF duration
-  
+                digitalWrite(vibration_pin, HIGH);
+                delay(1000);  
+                digitalWrite(vibration_pin, LOW);
+                delay(200);  
             }
             else if (alarmType.equals("Standar")) {
                 Serial.println("Standar");
-                digitalWrite(ledPin, HIGH);
-                delay(500);  // Vibration ON duration
-                digitalWrite(ledPin, LOW);
+                digitalWrite(vibration_pin, HIGH);
+                delay(500);  
+                digitalWrite(vibration_pin, LOW);
                 Serial.println("Not Vibrating");
-                delay(200);  // Vibration OFF duration
+                delay(200); 
             }
       }
-      digitalWrite(ledPin, LOW);  // Turn off the LED
-
+      digitalWrite(vibration_pin, LOW);  
       http.end();
-      Serial.println("DeepSleep for 1 second and check again");
+      Serial.println("DeepSleep for 1 miliSecond and check again");
       ESP.deepSleep(1000);
     }
 
-    digitalWrite(ledPin, LOW);  // Turn off the LED
+    digitalWrite(vibration_pin, LOW);  
 
     http.end();
 
@@ -119,5 +120,4 @@ String extractTimeDiff(String jsonResponse) {
 }
 
 void loop() {
-  // Empty loop as your program doesn't require continuous execution in the loop.
 }
